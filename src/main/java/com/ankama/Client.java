@@ -67,7 +67,7 @@ public class Client {
 
     public static String register() {
         String newPseudo;
-        System.out.println("Login on Server as your Pseudo : ");
+        System.out.print("Login on Server as your Pseudo : ");
         newPseudo = scanner.nextLine();
         return newPseudo;
     }
