@@ -1,7 +1,5 @@
 package com.ankama;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,7 +14,8 @@ public class ClientServerHandler implements Runnable {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private Socket socket;
-    private String clientIDReference;
+    private String clientID;
+    private String clientPseudo;
 
     public ClientServerHandler(Socket socket) {
         this.socket = socket;
@@ -24,11 +23,13 @@ public class ClientServerHandler implements Runnable {
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-            clientIDReference = bufferedReader.readLine();
+            clientID = bufferedReader.readLine();
+            clientPseudo = bufferedReader.readLine();
         } catch (IOException e) {
-            e.printStackTrace();
+            closeCommunication();
         }
         handlers.add(this);
+        writeToClients("Client [" + clientPseudo + "] has entered the server. Welcome !");
     }
 
     public void listenFromClient() {
@@ -38,22 +39,37 @@ public class ClientServerHandler implements Runnable {
                 writeToClients(msg);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            closeCommunication();
         }
     }
 
     public void writeToClients(String msg) {
         try {
             for (ClientServerHandler clientServerHandler : handlers) {
-                if (clientServerHandler.clientIDReference != this.clientIDReference) {
+                if (clientServerHandler.clientID != this.clientID) {
                     clientServerHandler.bufferedWriter.write(msg);
                     clientServerHandler.bufferedWriter.newLine();
                     clientServerHandler.bufferedWriter.flush();
                 }
             }
         } catch (IOException e) {
+            closeCommunication();
+        }
+    }
+
+    public void closeCommunication() {
+        writeToClients(clientPseudo + " has disconnected !");
+        try {
+            if (socket != null)
+                socket.close();
+            if (bufferedReader != null)
+                bufferedReader.close();
+            if (bufferedWriter != null)
+                bufferedWriter.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
+        handlers.remove(this);
     }
 
     @Override
