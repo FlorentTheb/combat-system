@@ -2,6 +2,7 @@ package com.ankama;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server {
     private ServerSocket serverSocket;
@@ -14,8 +15,12 @@ public class Server {
         while (!serverSocket.isClosed()) {
             try {
                 System.out.println("Waiting for a client");
-                serverSocket.accept();
+                Socket socket = serverSocket.accept();
                 System.out.println("A new client is connected !");
+                ClientServerHandler clientServerHandler = new ClientServerHandler(socket);
+
+                Thread thread = new Thread(clientServerHandler);
+                thread.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }

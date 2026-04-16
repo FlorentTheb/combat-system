@@ -17,12 +17,21 @@ public class Client {
     private String clientPseudo;
     private String clientID;
 
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+
     public Client(Socket socket, String pseudo) {
 
         this.socket = socket;
         this.clientPseudo = pseudo;
         this.clientID = UUID.randomUUID().toString();
 
+        try {
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String login() {
