@@ -15,6 +15,7 @@ public class Server {
             try {
                 System.out.println("Waiting for a client");
                 serverSocket.accept();
+                System.out.println("A new client is connected !");
             } catch (IOException e) {
                 e.printStackTrace();
             }
