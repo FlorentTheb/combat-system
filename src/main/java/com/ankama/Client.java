@@ -20,30 +20,68 @@ public class Client {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    public Client(Socket socket, String pseudo) {
+    private Scanner clientScanner;
 
-        this.socket = socket;
-        this.clientPseudo = pseudo;
-        this.clientID = UUID.randomUUID().toString();
+    public Client() {
+        this.clientScanner = new Scanner(System.in);
 
         try {
+            this.socket = new Socket("localhost", 2077);
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        login();
+    }
+
+    public void readInputs() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (socket.isConnected()) {
+                    try {
+                        System.out.println(bufferedReader.readLine());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public void writeOutputs() {
+        try {
+            while (socket.isConnected()) {
+                String msg = clientScanner.nextLine();
+                bufferedWriter.write(clientPseudo + " : " + msg);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static String login() {
-        Scanner scanner = new Scanner(System.in);
+    public void login() {
         System.out.println("Login on Server as your Pseudo : ");
-        return scanner.nextLine();
+        clientPseudo = clientScanner.nextLine();
+        clientID = UUID.randomUUID().toString();
+        try {
+            bufferedWriter.write(clientID);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     public static void main(String[] args) throws IOException {
-        String pseudo = login();
-        Socket socket = new Socket("localhost", 2077);
-        Client client = new Client(socket, pseudo);
+        Client client = new Client();
+
+        client.readInputs();
     }
 }
