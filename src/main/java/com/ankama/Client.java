@@ -10,6 +10,9 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class Client {
+
+    private static final Scanner scanner = new Scanner(System.in);
+
     private Socket socket;
     private String pseudo;
     private String id;
@@ -17,11 +20,7 @@ public class Client {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    private Scanner clientScanner;
-
     public Client(String pseudo) {
-
-        this.clientScanner = new Scanner(System.in);
 
         this.pseudo = pseudo;
         this.id = UUID.randomUUID().toString();
@@ -41,12 +40,12 @@ public class Client {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (socket.isConnected()) {
-                    try {
+                try {
+                    while (socket.isConnected()) {
                         System.out.println(bufferedReader.readLine());
-                    } catch (Exception e) {
-                        disconnect();
                     }
+                } catch (IOException e) {
+                    disconnect();
                 }
             }
         }).start();
@@ -55,7 +54,7 @@ public class Client {
     public void writeOutputs() {
         try {
             while (socket.isConnected()) {
-                String msg = clientScanner.nextLine();
+                String msg = scanner.nextLine();
                 bufferedWriter.write(pseudo + " : " + msg);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
@@ -67,11 +66,9 @@ public class Client {
     }
 
     public static String register() {
-        Scanner registerScanner = new Scanner(System.in);
         String newPseudo;
         System.out.println("Login on Server as your Pseudo : ");
-        newPseudo = registerScanner.nextLine();
-        registerScanner.close();
+        newPseudo = scanner.nextLine();
         return newPseudo;
     }
 
@@ -90,6 +87,9 @@ public class Client {
     }
 
     public void disconnect() {
+
+        System.out.println("Server not reachable, try again later !");
+        scanner.close();
         try {
             if (socket != null)
                 socket.close();
