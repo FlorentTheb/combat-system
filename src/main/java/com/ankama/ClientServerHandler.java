@@ -46,7 +46,7 @@ public class ClientServerHandler implements Runnable {
     public void writeToClients(String msg) {
         try {
             for (ClientServerHandler clientServerHandler : handlers) {
-                if (clientServerHandler.clientID != this.clientID) {
+                if (!clientServerHandler.clientID.equals(this.clientID)) {
                     clientServerHandler.bufferedWriter.write(msg);
                     clientServerHandler.bufferedWriter.newLine();
                     clientServerHandler.bufferedWriter.flush();
