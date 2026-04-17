@@ -106,7 +106,7 @@ public class ClientServerHandler implements Runnable {
                 // We use all the others clients connected (we dont want the Client sending a
                 // message to recieve its own message)
                 if (!clientServerHandler.clientID.equals(this.clientID))
-                    sendMessageToClient(msg);
+                    clientServerHandler.sendMessageToClient(msg);
             }
         } catch (IOException e) {
             closeCommunication();
