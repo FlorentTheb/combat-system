@@ -118,7 +118,7 @@ public class Client {
     public void choseSessionType() throws IOException {
         String choice;
         while (true) {
-            System.out.println("Game type ?\nPlayer vs Player -> 1\\nPlayer VS IA -> 2");
+            System.out.println("Game type ? (Type the number of your choice)\n1 ->Player vs Player\n2 -> Player VS IA");
             choice = scanner.nextLine();
             switch (choice) {
                 case "1":

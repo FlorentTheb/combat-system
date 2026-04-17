@@ -64,9 +64,7 @@ public class ClientServerHandler implements Runnable {
             }
         } else if (choice.equals("2")) {
             sessionMsg = "Welcome, you will face an IA";
-            bufferedWriter.write(sessionMsg);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
+            sendMessageToClient(sessionMsg);
         }
     }
 
@@ -87,25 +85,28 @@ public class ClientServerHandler implements Runnable {
         }
     }
 
+    public void sendMessageToClient(String msg) throws IOException {
+        // Send in the communication "pipe" (through the buffer writer) a message
+        // Write in the buffer
+        bufferedWriter.write(msg);
+
+        // Write an EOL (like \n) to make sure the reader on the other side (Client
+        // side) will stop after this message
+        bufferedWriter.newLine();
+
+        // Flush => Send the message through the socket and move on to the next new line
+        // (kinda like clean the current buffer after sending it)
+        bufferedWriter.flush();
+    }
+
     public void writeToWaitingRoom(String msg) {
         try {
             // We loop through all the clients connected references
             for (ClientServerHandler clientServerHandler : WaitingRoom.getInstance().getClients()) {
                 // We use all the others clients connected (we dont want the Client sending a
-                // message to
-                // recieve its own message)
-                //
-                if (!clientServerHandler.clientID.equals(this.clientID)) {
-                    // Send in the communication "pipe" (through the buffer writer) a message
-                    // Write in the buffer
-                    clientServerHandler.bufferedWriter.write(msg);
-                    // Write an EOL (like \n) to make sure the reader on the other side (Client
-                    // side) will stop after this message
-                    clientServerHandler.bufferedWriter.newLine();
-                    // Flush => Send the message through the socket and move on to the next new line
-                    // (kinda like clean the current buffer after sending it)
-                    clientServerHandler.bufferedWriter.flush();
-                }
+                // message to recieve its own message)
+                if (!clientServerHandler.clientID.equals(this.clientID))
+                    sendMessageToClient(msg);
             }
         } catch (IOException e) {
             closeCommunication();
