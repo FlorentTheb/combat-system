@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientServerHandler implements Runnable {
 
-    // Each instance will share the list of all instances, usefull to loop for
-    // future coms
-    private static CopyOnWriteArrayList<ClientServerHandler> handlers = new CopyOnWriteArrayList<>();
+    // Each instance will share the list of all instances to communicate to others
+    // CopyOnWriteArrayList instead of ArrayList tomake it thread safe when adding
+    // or removing
+    private static CopyOnWriteArrayList<ClientServerHandler> clientsConnected = new CopyOnWriteArrayList<>();
 
     // Buffered objects, make the transition of data efficient by not send char by
     // char, but in a buffer instead
@@ -25,6 +25,11 @@ public class ClientServerHandler implements Runnable {
 
     // ClientID to filter each Player as a unique one
     private String clientID;
+
+    public String getClientID() {
+        return clientID;
+    }
+
     // Pseudo to display informations of or for a specific Player (Only
     // visual-usefull)
     private String clientPseudo;
@@ -41,12 +46,28 @@ public class ClientServerHandler implements Runnable {
             clientID = bufferedReader.readLine();
             // Read a second time for the pseudo (Input read from a scanner Client side)
             clientPseudo = bufferedReader.readLine();
+            // Add this handler in the list for keeping its reference for the other handlers
+            clientsConnected.add(this);
+            waitForSessionChoice();
         } catch (IOException e) {
             closeCommunication();
         }
-        // Add this handler in the list for keeping its reference for the other handlers
-        handlers.add(this);
-        writeToClients("Client [" + clientPseudo + "] has entered the server. Welcome !");
+    }
+
+    public void waitForSessionChoice() throws IOException {
+        String sessionMsg;
+        String choice = bufferedReader.readLine();
+        if (choice.equals("1")) {
+            if (WaitingRoom.getInstance().addToWaitingRoom(this)) {
+                sessionMsg = "Client [" + clientPseudo + "] has entered the server. Welcome !";
+                writeToWaitingRoom(sessionMsg);
+            }
+        } else if (choice.equals("2")) {
+            sessionMsg = "Welcome, you will face an IA";
+            bufferedWriter.write(sessionMsg);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        }
     }
 
     public void listenFromClient() {
@@ -58,19 +79,22 @@ public class ClientServerHandler implements Runnable {
                 // sent a essage through its writer buffer)
                 String msg = bufferedReader.readLine();
                 // Once we have a new message (the method previously IS blocking),
-                writeToClients(msg);
+                if (WaitingRoom.getInstance().getClients().contains(this))
+                    writeToWaitingRoom(msg);
             }
         } catch (IOException e) {
             closeCommunication();
         }
     }
 
-    public void writeToClients(String msg) {
+    public void writeToWaitingRoom(String msg) {
         try {
-            // We loop through all the Handlers references
-            for (ClientServerHandler clientServerHandler : handlers) {
-                // We use all the others handlers (we dont want the Client sending a message to
+            // We loop through all the clients connected references
+            for (ClientServerHandler clientServerHandler : WaitingRoom.getInstance().getClients()) {
+                // We use all the others clients connected (we dont want the Client sending a
+                // message to
                 // recieve its own message)
+                //
                 if (!clientServerHandler.clientID.equals(this.clientID)) {
                     // Send in the communication "pipe" (through the buffer writer) a message
                     // Write in the buffer
@@ -89,7 +113,10 @@ public class ClientServerHandler implements Runnable {
     }
 
     public void closeCommunication() {
-        writeToClients(clientPseudo + " has disconnected !");
+        if (WaitingRoom.getInstance().getClients().contains(this)) {
+            writeToWaitingRoom(clientPseudo + " has disconnected !");
+            WaitingRoom.getInstance().removeFromWaitingRoom(this);
+        }
         try {
             // We close here every object used in the communication that is not null
             if (socket != null)
@@ -103,7 +130,7 @@ public class ClientServerHandler implements Runnable {
         }
         // Remove the reference of this handler since will not be used as the Client is
         // disconnected from the server
-        handlers.remove(this);
+        clientsConnected.remove(this);
     }
 
     // Method from the Thread that is parallelized therefore non blocking (even tho
