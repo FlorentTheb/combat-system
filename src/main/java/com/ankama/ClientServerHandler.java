@@ -7,12 +7,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientServerHandler implements Runnable {
 
     // Each instance will share the list of all instances, usefull to loop for
     // future coms
-    private static ArrayList<ClientServerHandler> handlers = new ArrayList<>();
+    private static CopyOnWriteArrayList<ClientServerHandler> handlers = new CopyOnWriteArrayList<>();
 
     // Buffered objects, make the transition of data efficient by not send char by
     // char, but in a buffer instead
