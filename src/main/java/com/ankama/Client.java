@@ -17,7 +17,7 @@ public class Client {
 
     private Socket socket;
     private String pseudo;
-    private String id;
+    private final String id;
 
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
@@ -115,11 +115,32 @@ public class Client {
         }
     }
 
+    public void choseSessionType() throws IOException {
+        String choice;
+        while (true) {
+            System.out
+                    .println("Game type ? (Type the number of your choice)\n1 -> Player vs Player\n2 -> Player VS IA");
+            choice = scanner.nextLine();
+            switch (choice) {
+                case "1":
+                case "2":
+                    bufferedWriter.write(choice);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                    return;
+                default:
+                    System.out.println("Unknown command, try again");
+            }
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         String newClientPseudo = register();
         // Creating a new Client will try to connect to the socket of the server
         Client client = new Client(newClientPseudo);
 
+        // Wait for the session type (PvP or vs IA)
+        client.choseSessionType();
         // method that will create a thread to read inputs indefinitely
         client.readInputs();
         // Main thread will loop for the keyboard input to output to the server
