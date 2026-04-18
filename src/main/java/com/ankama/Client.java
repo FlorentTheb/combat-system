@@ -22,8 +22,10 @@ public class Client {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
 
-    public Client(String pseudo) {
+    private volatile boolean areInputsAvailable;
 
+    public Client(String pseudo) {
+        this.areInputsAvailable = true;
         this.pseudo = pseudo;
         this.id = UUID.randomUUID().toString();
 
@@ -41,15 +43,21 @@ public class Client {
     }
 
     public void readInputs() {
-        // We use the run method of the interface Runnable to have a secondary thread
+        // We use the run method of the interface Runnable to have a second thread
         // listening in a loop for the input of its buffer reader
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     while (socket.isConnected()) {
-                        // We print in the console every message the Handler give the Client
-                        System.out.println(bufferedReader.readLine());
+                        String msgFromHandler = bufferedReader.readLine();
+                        if (msgFromHandler == null)
+                            disconnect();
+
+                        if (msgFromHandler.startsWith("TOGGLE_INPUTS_ON"))
+                            enableInputs();
+                        else
+                            System.out.println(msgFromHandler);
                     }
                 } catch (IOException e) {
                     disconnect();
@@ -61,13 +69,13 @@ public class Client {
     public void writeOutputs() {
         try {
             while (socket.isConnected()) {
-                // We wait for the next input
-                String msg = scanner.nextLine();
-                // If there is an keyboardinput (with Enter pressed to make it a "NextLine"
-                // array), we write the message in the writer buffer
-                bufferedWriter.write(pseudo + " : " + msg);
-                bufferedWriter.newLine();
-                bufferedWriter.flush();
+                if (areInputsAvailable) {
+                    String msg = scanner.nextLine();
+                    bufferedWriter.write(msg);
+                    bufferedWriter.newLine();
+                    bufferedWriter.flush();
+                    disableInputs();
+                }
             }
         } catch (IOException e) {
             disconnect();
@@ -98,9 +106,17 @@ public class Client {
         }
     }
 
+    public void disableInputs() {
+        areInputsAvailable = false;
+    }
+
+    public void enableInputs() {
+        areInputsAvailable = true;
+    }
+
     public void disconnect() {
 
-        System.out.println("Server not reachable, try again later !");
+        System.out.println("Disconnecting from server !");
         // No more use of its scanner
         scanner.close();
         try {
@@ -113,13 +129,13 @@ public class Client {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.exit(0);
     }
 
     public void choseSessionType() throws IOException {
         String choice;
         while (true) {
-            System.out
-                    .println("Game type ? (Type the number of your choice)\n1 -> Player vs Player\n2 -> Player VS IA");
+            System.out.println("Game type ?\n1 -> Player vs Player\n2 -> Player VS AI");
             choice = scanner.nextLine();
             switch (choice) {
                 case "1":
@@ -127,6 +143,7 @@ public class Client {
                     bufferedWriter.write(choice);
                     bufferedWriter.newLine();
                     bufferedWriter.flush();
+                    disableInputs();
                     return;
                 default:
                     System.out.println("Unknown command, try again");

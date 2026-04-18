@@ -12,8 +12,17 @@ public class WaitingRoom {
         return waitingRoom;
     }
 
-    public Boolean addToWaitingRoom(ClientServerHandler client) {
-        return waitingRoomClients.add(client);
+    public void addToWaitingRoom(ClientServerHandler client) {
+        if (waitingRoomClients.add(client)) {
+            if (waitingRoomClients.size() >= 2) {
+                CombatGroup combatGroup = new CombatGroup(waitingRoomClients.get(0), waitingRoomClients.get(1));
+                Thread thread = new Thread(combatGroup);
+                thread.start();
+                waitingRoomClients.subList(0, 1).clear();
+            } else {
+                client.sendMessageToClient("Waiting for another player to join");
+            }
+        }
     }
 
     public CopyOnWriteArrayList<ClientServerHandler> getClients() {
