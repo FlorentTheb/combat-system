@@ -20,7 +20,8 @@ public class WaitingRoom {
                 waitingRoomClients.get(1).setGroup(combatGroup);
                 Thread thread = new Thread(combatGroup);
                 thread.start();
-                waitingRoomClients.subList(0, 1).clear();
+                waitingRoomClients.remove(0);
+                waitingRoomClients.remove(0);
             } else {
                 client.sendMessageToClient("Waiting for another player to join");
             }
