@@ -61,7 +61,7 @@ public class HumanPlayer implements IPlayer {
     }
 
     public void computeWin(String loserPseudo) {
-        String message = "WIN ! " + loserPseudo + " has 0 HP remaining ! Well played !";
+        String message = "WIN ! " + loserPseudo + " couldn't handle the pressure ! Well played !";
         handler.sendMessageToClient(message);
     }
 
@@ -71,7 +71,7 @@ public class HumanPlayer implements IPlayer {
     }
 
     public void displayActionsAvailable() {
-        String actionsMsg = "Your turn !\n1 -> Massive Attack (20 DMG) | 50% Success Rate\n2 -> Light Attack (10 DMG)   | 90% Success Rate\n";
+        String actionsMsg = "Your turn !\n1 -> Massive Attack (20 DMG) | 50% Success Rate\n2 -> Light Attack (10 DMG)   | 90% Success Rate";
         handler.sendMessageToClient(actionsMsg);
     }
 }
