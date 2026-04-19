@@ -16,6 +16,8 @@ public class WaitingRoom {
         if (waitingRoomClients.add(client)) {
             if (waitingRoomClients.size() >= 2) {
                 CombatGroup combatGroup = new CombatGroup(waitingRoomClients.get(0), waitingRoomClients.get(1));
+                waitingRoomClients.get(0).setGroup(combatGroup);
+                waitingRoomClients.get(1).setGroup(combatGroup);
                 Thread thread = new Thread(combatGroup);
                 thread.start();
                 waitingRoomClients.subList(0, 1).clear();

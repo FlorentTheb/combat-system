@@ -21,6 +21,10 @@ public class ClientServerHandler implements Runnable {
     private BufferedWriter bufferedWriter;
 
     private CombatGroup group;
+    public void setGroup(CombatGroup group) {
+        this.group = group;
+    }
+
     private HumanPlayer player;
 
     public HumanPlayer getPlayer() {
@@ -89,7 +93,7 @@ public class ClientServerHandler implements Runnable {
             sessionMsg = "Welcome " + clientPseudo + " ! You will fight an AI...";
             sendMessageToClient(sessionMsg);
             CombatGroup combatGroup = new CombatGroup(this);
-            this.group = combatGroup;
+            setGroup(combatGroup);
             Thread thread = new Thread(combatGroup);
             thread.start();
         }
