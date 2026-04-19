@@ -12,6 +12,11 @@ public class CombatGroup implements Runnable {
     private final double lightAttackOdds = .9;
 
     private ArrayList<IPlayer> players = new ArrayList<>();
+
+    public ArrayList<IPlayer> getPlayers() {
+        return players;
+    }
+
     private IPlayer lastEmitter;
 
     private LinkedBlockingQueue<String> eventQueue = new LinkedBlockingQueue<>();
@@ -92,7 +97,7 @@ public class CombatGroup implements Runnable {
     }
 
     public void tryAttack(int damage, double odds, IPlayer attacker, IPlayer target) {
-        if (Math.random() <= odds) {
+        if (Math.random() < odds) {
             target.hit(damage);
             if (attacker instanceof HumanPlayer) {
                 ((HumanPlayer) attacker).displayHit(target.getPseudo(), damage, target.getHealthPoints());
