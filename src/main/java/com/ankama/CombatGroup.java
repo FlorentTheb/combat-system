@@ -24,6 +24,14 @@ public class CombatGroup implements Runnable {
     private int turnIndex;
     private Boolean isGameOver = false;
 
+    public int getTurnIndex() {
+        return turnIndex;
+    }
+
+    public Boolean getIsGameOver() {
+        return isGameOver;
+    }
+
     public CombatGroup(ClientServerHandler handler1, ClientServerHandler handler2) {
         handler1.initCombatPlayer(baseHealthPoints, handler2.getClientPseudo());
         players.add(handler1.getPlayer());
