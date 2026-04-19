@@ -108,7 +108,7 @@ public class ClientServerHandler implements Runnable {
         try {
             while (socket.isConnected()) {
                 msgFromClient = bufferedReader.readLine();
-                if (msgFromClient.equals("Bye")) {
+                if (msgFromClient == null || msgFromClient.equals("Bye")) {
                     closeCommunication();
                     return;
                 }
@@ -178,8 +178,9 @@ public class ClientServerHandler implements Runnable {
     public void closeCommunication() {
         if (WaitingRoom.getInstance().getClients().contains(this))
             WaitingRoom.getInstance().removeFromWaitingRoom(this);
-        else if (group != null)
-            group.newEvent("DISCONNECT", player);
+        else if (group != null) {
+            group.newEvent("DISCONNECTED", player);
+        }
 
         try {
             // We close here every object used in the communication that is not null
