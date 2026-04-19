@@ -6,8 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
-
 public class WaitingRoomTest {
 
     @BeforeEach
