@@ -8,6 +8,10 @@ public class WaitingRoom {
 
     private static CopyOnWriteArrayList<ClientServerHandler> waitingRoomClients = new CopyOnWriteArrayList<>();
 
+    public CopyOnWriteArrayList<ClientServerHandler> getWaitingRoomClients() {
+        return waitingRoomClients;
+    }
+
     public static WaitingRoom getInstance() {
         return waitingRoom;
     }
@@ -34,5 +38,9 @@ public class WaitingRoom {
 
     public void removeFromWaitingRoom(ClientServerHandler client) {
         waitingRoomClients.remove(client);
+    }
+
+    public void removeAllFromWaitingRoom() {
+        waitingRoomClients.clear();
     }
 }

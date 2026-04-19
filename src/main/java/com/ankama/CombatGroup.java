@@ -12,12 +12,25 @@ public class CombatGroup implements Runnable {
     private final double lightAttackOdds = .9;
 
     private ArrayList<IPlayer> players = new ArrayList<>();
+
+    public ArrayList<IPlayer> getPlayers() {
+        return players;
+    }
+
     private IPlayer lastEmitter;
 
     private LinkedBlockingQueue<String> eventQueue = new LinkedBlockingQueue<>();
 
     private int turnIndex;
     private Boolean isGameOver = false;
+
+    public int getTurnIndex() {
+        return turnIndex;
+    }
+
+    public Boolean getIsGameOver() {
+        return isGameOver;
+    }
 
     public CombatGroup(ClientServerHandler handler1, ClientServerHandler handler2) {
         handler1.initCombatPlayer(baseHealthPoints, handler2.getClientPseudo());
@@ -92,7 +105,7 @@ public class CombatGroup implements Runnable {
     }
 
     public void tryAttack(int damage, double odds, IPlayer attacker, IPlayer target) {
-        if (Math.random() <= odds) {
+        if (Math.random() < odds) {
             target.hit(damage);
             if (attacker instanceof HumanPlayer) {
                 ((HumanPlayer) attacker).displayHit(target.getPseudo(), damage, target.getHealthPoints());
