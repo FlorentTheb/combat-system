@@ -21,6 +21,7 @@ public class ClientServerHandler implements Runnable {
     private BufferedWriter bufferedWriter;
 
     private CombatGroup group;
+
     public void setGroup(CombatGroup group) {
         this.group = group;
     }
@@ -56,7 +57,6 @@ public class ClientServerHandler implements Runnable {
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
 
-            initClientInformations();
         } catch (IOException e) {
             closeCommunication();
         }
@@ -201,6 +201,11 @@ public class ClientServerHandler implements Runnable {
     // listenFromClient IS blocking by waiting it buffer reader to read line)
     @Override
     public void run() {
+        try {
+            initClientInformations();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         listenFromClient();
     }
 }
