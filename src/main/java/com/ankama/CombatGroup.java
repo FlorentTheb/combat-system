@@ -126,11 +126,9 @@ public class CombatGroup implements Runnable {
 
     private void computeForfeit() {
         IPlayer winner = getOpponent(lastEmitter);
-        if (winner instanceof HumanPlayer) {
-            if (lastEmitter instanceof HumanPlayer) {
-                ((HumanPlayer) winner).computeWin(((HumanPlayer) lastEmitter).getHandler().getClientPseudo());
-            }
-        }
+        if (winner instanceof HumanPlayer)
+            ((HumanPlayer) winner).computeWin(lastEmitter.getPseudo());
+
         isGameOver = true;
     }
 
