@@ -51,7 +51,8 @@ public class Client {
                 try {
                     while (socket.isConnected()) {
                         String msgFromHandler = bufferedReader.readLine();
-                        if (msgFromHandler == null)
+                        if (msgFromHandler == null || msgFromHandler.startsWith("WIN")
+                                || msgFromHandler.startsWith("LOST"))
                             disconnect();
 
                         if (msgFromHandler.startsWith("TOGGLE_INPUTS_ON"))
