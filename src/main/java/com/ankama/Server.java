@@ -12,10 +12,9 @@ public class Server {
     }
 
     public void runServer() {
+        System.out.println("Waiting for a client");
         while (!serverSocket.isClosed()) {
             try {
-                System.out.println("Waiting for a client");
-
                 // Blocking method to wait for a socket to be created and linked to the
                 // serverSocket
                 Socket socket = serverSocket.accept();
