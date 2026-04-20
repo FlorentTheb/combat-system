@@ -51,14 +51,18 @@ public class Client {
                 try {
                     while (socket.isConnected()) {
                         String msgFromHandler = bufferedReader.readLine();
-                        if (msgFromHandler == null || msgFromHandler.startsWith("WIN")
-                                || msgFromHandler.startsWith("LOST"))
+                        if (msgFromHandler == null)
                             disconnect();
 
                         if (msgFromHandler.startsWith("TOGGLE_INPUTS_ON"))
                             enableInputs();
-                        else
+                        else if (msgFromHandler.startsWith("WIN")
+                                || msgFromHandler.startsWith("LOST")) {
                             System.out.println(msgFromHandler);
+                            disconnect();
+                        } else {
+                            System.out.println(msgFromHandler);
+                        }
                     }
                 } catch (IOException e) {
                     disconnect();
