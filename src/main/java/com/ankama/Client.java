@@ -54,14 +54,24 @@ public class Client {
                         if (msgFromHandler == null)
                             disconnect();
 
-                        if (msgFromHandler.startsWith("TOGGLE_INPUTS_ON"))
+                        if (msgFromHandler.startsWith("TOGGLE_INPUTS_ON")) // Enable turn inputs when it is its turn to
+                                                                           // play
                             enableInputs();
-                        else if (msgFromHandler.startsWith("WIN")
+                        else if (msgFromHandler.startsWith("WIN") // Print the win or lose message before disconnecting
                                 || msgFromHandler.startsWith("LOST")) {
                             System.out.println(msgFromHandler);
                             disconnect();
                         } else {
                             System.out.println(msgFromHandler);
+                        }
+
+                        // Only on a new turn, we wait after displaying message
+                        if (msgFromHandler.startsWith("---")) {
+                            try {
+                                Thread.sleep(1500);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
                         }
                     }
                 } catch (IOException e) {

@@ -138,11 +138,6 @@ public class ClientServerHandler implements Runnable {
     public void newTurnDisplay() {
         String msg = "\n-----------------------------------\n";
         sendMessageToClient(msg);
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 
     // Send (through the buffer writer) a message
