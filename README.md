@@ -2,14 +2,14 @@
 ###### This project is intended for a technical test and is running locally on a machine
 
 ### HOW TO INSTALL AND USE
-*You will need at least **java 8+** to execute the programs*
+*You will need at least **java 17** to execute the programs*
 1. Clone this repo where you wish
 2. Open a command prompt at the root of the repo *(where **pom.xml** is located)*
 3. To open the server :
 > java -jar server.jar
 4. To open a client :
 > java -jar client.jar
-5. If you need or want to generate your own .jar, first get **Maven *(V3.9.14 recommended)*** on your machine
+5. If you need or want to generate your own .jar, first get **Maven *(V3.X)*** on your machine
 6. On a command prompt where pom.xml is located :
 > mvn clean package
 7. A client.jar and a server.jar should be cleanly generated at the same location, follow the previous step then.
@@ -36,12 +36,19 @@
 #### Mode Player vs IA
 1. There is no waiting room, you will face a robot chosing randomly its actions
 2. The same principle in this gamemode as the *Player vs Player* mode, your opponent is just a robot. Easy right ?
-3. No seriously, don't lose against a bot... Humanitys'pride depends on your choices !
+3. No seriously, don't lose against a bot... Humanity's pride depends on your choices !
 
 </br>
 
 ### TECHNICAL AREA
 ###### If you are not familiar with code, not much a need to look any further. Oh and the next part is in french since also.
+
+#### Stack technique :
+Java 17 | Maven 3.x | JUnit 5 | Mockito 5 | Java Sockets
+
+#### Tests unitiaires :
+Des tests unitaires sur des fonctionnalités ciblées sont écrits et peuvent être lancés manuellement :
+> mvn test
 
 #### Principes :
 
